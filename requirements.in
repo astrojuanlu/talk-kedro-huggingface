@@ -1,0 +1,5 @@
+transformers[torch]
+sentencepiece
+protobuf
+
+kedro-datasets @ git+https://github.com/dannyrfar/kedro-plugins@feat/hf-datasets#subdirectory=kedro-datasets
