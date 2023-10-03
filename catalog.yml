@@ -1,0 +1,29 @@
+summarizer_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: summarization
+  # model_name: sshleifer/distilbart-cnn-12-6
+
+spanish_summarizer_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: summarization
+  model_name: ELiRF/mbart-large-cc25-dacsa-es
+
+fill_mask_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: fill-mask
+  model_name: Twitter/twhin-bert-base
+
+language_detector_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: text-classification
+  model_name: papluca/xlm-roberta-base-language-detection
+
+shortform.sentiment_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: sentiment-analysis
+  model_name: cardiffnlp/twitter-roberta-base-sentiment-latest
+
+longform.sentiment_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: sentiment-analysis
+  model_name: j-hartmann/emotion-english-distilroberta-base
