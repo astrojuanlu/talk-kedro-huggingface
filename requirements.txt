@@ -105,6 +105,8 @@ platformdirs==3.11.0
     # via pytoolconfig
 pluggy==1.2.0
     # via kedro
+protobuf==4.24.3
+    # via -r requirements.in
 psutil==5.9.5
     # via accelerate
 pygments==2.16.1
@@ -140,6 +142,8 @@ rope==1.10.0
     # via kedro
 safetensors==0.3.3
     # via transformers
+sentencepiece==0.1.99
+    # via -r requirements.in
 six==1.16.0
     # via python-dateutil
 smmap==5.0.1
