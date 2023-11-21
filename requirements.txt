@@ -68,7 +68,7 @@ jmespath==1.0.1
     # via kedro
 kedro==0.18.13
     # via kedro-datasets
-kedro-datasets @ git+https://github.com/dannyrfar/kedro-plugins@feat/hf-datasets#subdirectory=kedro-datasets
+kedro-datasets @ git+https://github.com/kedro-org/kedro-plugins@main#subdirectory=kedro-datasets
     # via -r requirements.in
 lazy-loader==0.3
     # via kedro-datasets
