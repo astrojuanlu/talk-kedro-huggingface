@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "social_summarizer"
+dependencies = [
+    "deltalake",
+    "httpx",
+    "kedro==0.18.14",
+    "kedro-datasets[api,huggingface,polars] @ git+https://github.com/kedro-org/kedro-plugins@f59e9301#subdirectory=kedro-datasets",
+    "protobuf",
+    "pydantic>=2",  # Incompatible with Kedro-Viz
+    "s3fs",
+    "sentencepiece",
+    "structlog",
+    "transformers[torch]",
+]
+dynamic = ["version"]
+
+[project.scripts]
+social-summarizer = "social_summarizer.__main__:main"
+
+[project.optional-dependencies]
+docs = [
+    "docutils<0.18.0",
+    "sphinx~=3.4.3",
+    "sphinx_rtd_theme==0.5.1",
+    "nbsphinx==0.8.1",
+    "nbstripout~=0.4",
+    "sphinx-autodoc-typehints==1.11.1",
+    "sphinx_copybutton==0.3.1",
+    "ipykernel>=5.3, <7.0",
+    "Jinja2<3.1.0",
+    "myst-parser~=0.17.2",
+]
+
+[project.entry-points."kedro.hooks"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false
+
+[tool.setuptools.dynamic]
+version = {attr = "social_summarizer.__version__"}
+
+[tool.kedro]
+package_name = "social_summarizer"
+project_name = "social-summarizer"
+kedro_init_version = "0.18.14"
+
+[tool.pytest.ini_options]
+addopts = """
+--cov-report term-missing \
+--cov src/social_summarizer -ra"""
+
+[tool.coverage.report]
+fail_under = 0
+show_missing = true
+exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
+
+[tool.ruff]
+line-length = 88
+show-fixes = true
+select = [
+    "F",   # Pyflakes
+    "W",   # pycodestyle
+    "E",   # pycodestyle
+    "I",   # isort
+    "UP",  # pyupgrade
+    "PL",  # Pylint
+    "T201", # Print Statement
+]
