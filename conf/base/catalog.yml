@@ -9,3 +9,10 @@ statuses_table:
   credentials: minio
   save_args:
     mode: "append"
+
+statuses_clean:
+  type: social_summarizer.datasets.polars_delta.DeltaDataset
+  filepath: s3://social-summarizer/statuses-clean
+  credentials: minio
+  save_args:
+    mode: "overwrite"
