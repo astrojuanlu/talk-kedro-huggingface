@@ -8,7 +8,7 @@ import structlog
 from deltalake.exceptions import TableNotFoundError
 from kedro.config import OmegaConfigLoader
 from kedro.io import DataCatalog
-from social_summarizer.pipelines.data_processing.nodes import extract_statuses
+from social_summarizer.pipelines.data_extraction.nodes import extract_statuses
 
 BASE_MASTODON_URL = "https://{instance_domain}/api/v1/"
 STATUSES_ENDPOINT = "accounts/{account_id}/statuses/"

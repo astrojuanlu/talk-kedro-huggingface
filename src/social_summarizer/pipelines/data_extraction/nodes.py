@@ -1,5 +1,5 @@
 """
-This is a boilerplate pipeline 'data_processing'
+This is a boilerplate pipeline 'data_extraction'
 generated using Kedro 0.18.14
 """
 from __future__ import annotations
