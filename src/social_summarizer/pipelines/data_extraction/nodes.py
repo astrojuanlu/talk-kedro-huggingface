@@ -50,6 +50,7 @@ class MastodonStatus(BaseModel):
     content: str
     account: MastodonAccount
     mentions: list[MastodonMention]
+    # reblog: "MastodonStatus"  # Unused
 
     # FIXME: # Might be empty, which is problematic when serializing to Delta
     # tags: list[MastodonTag]
