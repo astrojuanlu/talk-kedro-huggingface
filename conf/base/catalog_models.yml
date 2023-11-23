@@ -1,0 +1,41 @@
+# Here you can define all your data sets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+
+fill_mask_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: fill-mask
+  model_name: Twitter/twhin-bert-base
+
+default.summarizer_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: summarization
+  # This is the default model, but declaring it helps with reproducibility
+  model_name: sshleifer/distilbart-cnn-12-6
+
+cnn.summarizer_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: summarization
+  model_name: facebook/bart-large-cnn
+  pipeline_kwargs:
+    truncation: true
+
+text_generation_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: text-generation
+  model_name: mistralai/Mistral-7B-v0.1
+  pipeline_kwargs:
+    max_new_tokens: 200
+
+# text_generation_model:
+#   type: huggingface.HFTransformerPipelineDataset
+#   task: text-generation
+#   model_name: microsoft/phi-1_5
+#   pipeline_kwargs:
+#     trust_remote_code: true
+
+shortform.sentiment_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: sentiment-analysis
+  model_name: cardiffnlp/twitter-roberta-base-sentiment-latest
