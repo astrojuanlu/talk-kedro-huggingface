@@ -32,6 +32,8 @@ cnn.summarizer_model:
   type: huggingface.HFTransformerPipelineDataset
   task: summarization
   model_name: facebook/bart-large-cnn
+  pipeline_kwargs:
+    truncation: true
 
 text_generation_model:
   type: huggingface.HFTransformerPipelineDataset
