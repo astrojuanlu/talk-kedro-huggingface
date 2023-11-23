@@ -18,6 +18,7 @@ class MastodonAccount(BaseModel):
     id: str
     username: str
     acct: str
+    display_name: str
 
 
 class MastodonMention(BaseModel):
