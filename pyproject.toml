@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "social_summarizer"
 dependencies = [
     "deltalake",
+    "einops",
     "httpx",
     "kedro==0.18.14",
     "kedro-datasets[api,huggingface,polars] @ git+https://github.com/kedro-org/kedro-plugins@f59e9301#subdirectory=kedro-datasets",

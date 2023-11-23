@@ -6,13 +6,54 @@
 statuses_table:
   type: social_summarizer.datasets.polars_delta.DeltaDataset
   filepath: s3://social-summarizer/statuses
-  credentials: minio
+  credentials: minio_native
   save_args:
     mode: "append"
 
 statuses_clean:
   type: social_summarizer.datasets.polars_delta.DeltaDataset
   filepath: s3://social-summarizer/statuses-clean
-  credentials: minio
+  credentials: minio_native
   save_args:
     mode: "overwrite"
+
+fill_mask_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: fill-mask
+  model_name: Twitter/twhin-bert-base
+
+default.summarizer_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: summarization
+  # This is the default model, but declaring it helps with reproducibility
+  model_name: sshleifer/distilbart-cnn-12-6
+
+cnn.summarizer_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: summarization
+  model_name: facebook/bart-large-cnn
+
+text_generation_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: text-generation
+  model_name: mistralai/Mistral-7B-v0.1
+  pipeline_kwargs:
+    max_new_tokens: 200
+
+# text_generation_model:
+#   type: huggingface.HFTransformerPipelineDataset
+#   task: text-generation
+#   model_name: microsoft/phi-1_5
+#   pipeline_kwargs:
+#     trust_remote_code: true
+
+shortform.sentiment_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: sentiment-analysis
+  model_name: cardiffnlp/twitter-roberta-base-sentiment-latest
+
+executive_summary:
+  type: text.TextDataset
+  filepath: s3://social-summarizer/executive-summary.txt
+  versioned: true
+  credentials: minio_fsspec
