@@ -39,3 +39,8 @@ shortform.sentiment_model:
   type: huggingface.HFTransformerPipelineDataset
   task: sentiment-analysis
   model_name: cardiffnlp/twitter-roberta-base-sentiment-latest
+
+language_detector_model:
+  type: huggingface.HFTransformerPipelineDataset
+  task: text-classification
+  model_name: papluca/xlm-roberta-base-language-detection
