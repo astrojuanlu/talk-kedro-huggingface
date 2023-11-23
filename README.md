@@ -1,6 +1,10 @@
-# social-summarizer
+# Who needs ChatGPT? Rock solid AI pipelines with Hugging Face and Kedro
 
-## Overview
+Material for the talk "Who needs ChatGPT? Rock solid AI pipelines with Hugging Face and Kedro".
+
+![Architecture](./kedro-hf.png)
+
+## Kedro project
 
 This is your new Kedro project, which was generated using `kedro 0.18.14`.
 
