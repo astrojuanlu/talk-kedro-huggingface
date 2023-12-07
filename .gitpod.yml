@@ -16,4 +16,4 @@ tasks:
       minio server --address :9010 --console-address :19010 /workspace/data
 
 ports:
-  - 19010
+  - port: 19010
