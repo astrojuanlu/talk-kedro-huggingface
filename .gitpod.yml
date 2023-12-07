@@ -7,3 +7,13 @@ tasks:
     # see https://github.com/pyenv/pyenv/issues/2243
     init: |
       pip install -r requirements.txt
+
+  - name: Launch MinIO server
+    init: |
+      mkdir -p /workspace/data
+      minio server /workspace/data &
+    command: |
+      minio server --address :9010 --console-address :19010 /workspace/data
+
+ports:
+  - 19010
