@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "social_summarizer"
 dependencies = [
+    "beautifulsoup4",
     "deltalake",
     "einops",
     "httpx",
