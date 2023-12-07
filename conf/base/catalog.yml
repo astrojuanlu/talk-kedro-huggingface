@@ -3,12 +3,22 @@
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://docs.kedro.org/en/stable/data/data_catalog.html
 
+statuses_table_readonly:
+  type: social_summarizer.datasets.polars_delta.DeltaDataset
+  filepath: s3://social-summarizer/statuses
+  credentials: minio_native
+  save_args:
+    mode: "error"
+
 statuses_table:
   type: social_summarizer.datasets.polars_delta.DeltaDataset
   filepath: s3://social-summarizer/statuses
   credentials: minio_native
   save_args:
     mode: "append"
+    # overwrite_schema: false is already the default,
+    # we make it explicit to emphasize that we don't want to lose data
+    overwrite_schema: false
 
 statuses_clean:
   type: social_summarizer.datasets.polars_delta.DeltaDataset

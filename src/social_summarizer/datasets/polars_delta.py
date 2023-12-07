@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 import fsspec
 import polars as pl
+from deltalake.exceptions import TableNotFoundError
 from kedro.io.core import (
     PROTOCOL_DELIMITER,
     AbstractVersionedDataset,
@@ -88,9 +89,13 @@ class DeltaDataset(AbstractVersionedDataset[pl.DataFrame, pl.DataFrame]):
         load_path = str(self._get_load_path())
 
         load_path = f"{self._protocol}{PROTOCOL_DELIMITER}{load_path}"
-        return pl.read_delta(
-            load_path, storage_options=self._storage_options, **self._load_args
-        )
+        # HACK: If the table is empty, return an empty DataFrame
+        try:
+            return pl.read_delta(
+                load_path, storage_options=self._storage_options, **self._load_args
+            )
+        except TableNotFoundError:
+            return pl.DataFrame()
 
     def _save(self, data: pl.DataFrame) -> None:
         save_path = get_filepath_str(self._get_save_path(), self._protocol)

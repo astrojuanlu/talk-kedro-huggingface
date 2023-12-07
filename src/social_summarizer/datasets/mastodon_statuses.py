@@ -1,19 +1,14 @@
-# "Manual" pipeline to workaround some time limits
-
+import typing as t
 from urllib.parse import parse_qsl, urljoin, urlparse
 
 import httpx
-import polars as pl
 import structlog
-from deltalake.exceptions import TableNotFoundError
-from kedro.config import OmegaConfigLoader
-from kedro.io import DataCatalog
-from social_summarizer.pipelines.data_extraction.nodes import extract_statuses
+from kedro.io import AbstractDataset
+
+logger = structlog.get_logger()
 
 BASE_MASTODON_URL = "https://{instance_domain}/api/v1/"
 STATUSES_ENDPOINT = "accounts/{account_id}/statuses/"
-
-logger = structlog.get_logger()
 
 
 def parse_links(links_str: str) -> dict[str, str]:
@@ -29,14 +24,24 @@ def parse_links(links_str: str) -> dict[str, str]:
 
 
 def get_statuses(
-    instance_domain, account_id, *, start_id=None, max_id=None, max_requests=10
+    instance_domain,
+    account_id,
+    *,
+    max_id=None,
+    max_requests=10,
+    client=None,
+    base_mastodon_url=BASE_MASTODON_URL,
+    statuses_endpoint=STATUSES_ENDPOINT,
 ):
-    client = httpx.Client()
+    if not client:
+        client = httpx.Client()
 
-    url = urljoin(BASE_MASTODON_URL, STATUSES_ENDPOINT).format(
+    url = urljoin(base_mastodon_url, statuses_endpoint).format(
         instance_domain=instance_domain,
         account_id=account_id,
     )
+
+    start_id = yield
 
     params = {}
     if max_id is not None:
@@ -50,7 +55,6 @@ def get_statuses(
         # and paginate from there
         params["min_id"] = start_id
 
-    statuses = []
     for _ in range(max_requests):
         response = client.get(url, params=params)
         if not response.is_success:
@@ -61,9 +65,7 @@ def get_statuses(
             )
             break
 
-        # Extend list of statuses and crop it to its maximum length,
-        # keeping the earliest ones
-        statuses = response.json() + statuses
+        yield from response.json()
 
         if link_header_str := response.headers.get("link"):
             links = parse_links(link_header_str)
@@ -74,34 +76,42 @@ def get_statuses(
             else:
                 # No more statuses
                 break
+        else:
+            # No more statuses
+            break
     else:
         logger.warning("Max number of requests reached")
 
-    return statuses
 
+class MastodonStatusesDataset(AbstractDataset):
+    def __init__(
+        self,
+        instance_domain,
+        account_id,
+        max_requests=10,
+    ):
+        self.instance_domain = instance_domain
+        self.account_id = account_id
+        self.max_requests = max_requests
 
-def main(instance_domain, account_id, latest_id=None):
-    conf_loader = OmegaConfigLoader(
-        conf_source="conf", base_env="base", default_run_env="local"
-    )
-    catalog = DataCatalog.from_config(
-        conf_loader.get("catalog"), credentials=conf_loader.get("credentials")
-    )
+        self._client = httpx.Client()
 
-    if latest_id is None:
-        try:
-            df_statuses = catalog.load("statuses_table")
+    def _load(self) -> t.Generator[t.Dict[str, t.Any], str, None]:
+        return get_statuses(
+            instance_domain=self.instance_domain,
+            account_id=self.account_id,
+            max_requests=self.max_requests,
+            client=self._client,
+        )
 
-            latest_id = (
-                df_statuses.filter(pl.col("created_at") == pl.col("created_at").max())
-                .select(pl.col("id"))
-                .item()
-            )
-        except TableNotFoundError:
-            pass
+    def _save(self, data) -> None:
+        raise NotImplementedError(
+            f"Save is not implemented for {self.__class__.__name__}"
+        )
 
-    statuses = get_statuses(instance_domain, account_id, start_id=latest_id)
-    if statuses:
-        df_statuses = extract_statuses(statuses).sort("created_at")
-
-        catalog.save("statuses_table", df_statuses)
+    def _describe(self) -> t.Dict[str, t.Any]:
+        return dict(
+            instance_domain=self.instance_domain,
+            account_id=self.account_id,
+            max_requests=self.max_requests,
+        )

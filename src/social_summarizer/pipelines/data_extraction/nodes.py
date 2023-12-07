@@ -6,10 +6,12 @@ from __future__ import annotations
 
 import datetime as dt
 import json
-import typing as t
 
 import polars as pl
+import structlog
 from pydantic import BaseModel, ConfigDict, TypeAdapter
+
+logger = structlog.get_logger()
 
 
 class MastodonAccount(BaseModel):
@@ -60,7 +62,26 @@ class MastodonStatus(BaseModel):
     # tags: list[MastodonTag]
 
 
-def extract_statuses(statuses: list[dict[str, t.Any]]) -> pl.DataFrame:
+def extract_statuses(statuses_gen, df_statuses, absolute_min_id) -> pl.DataFrame:
+    if len(df_statuses) > 0:
+        latest_id = (
+            df_statuses.filter(pl.col("created_at") == pl.col("created_at").max())
+            .select(pl.col("id"))
+            .item()
+        )
+    else:
+        latest_id = absolute_min_id
+
+    # Pump generator before sending the first value
+    next(statuses_gen)
+    try:
+        statuses = [statuses_gen.send(latest_id)]
+    except StopIteration:
+        return pl.DataFrame([], schema=df_statuses.schema)
+
+    statuses.extend(statuses_gen)
+    logger.debug("Extracted statuses", num_statuses=len(statuses), latest_id=latest_id)
+
     adapter = TypeAdapter(list[MastodonStatus])
     objects = adapter.validate_json(json.dumps(statuses))
     return pl.from_dicts(objects)
