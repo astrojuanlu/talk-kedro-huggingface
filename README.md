@@ -4,7 +4,7 @@
 
 Material for the talk "Who needs ChatGPT? Rock solid AI pipelines with Hugging Face and Kedro".
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/astrojuanlu/talk-kedro-huggingface/)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/astrojuanlu/talk-kedro-huggingface/tree/pydata-global-2023)
 
 ![Architecture](./kedro-hf.png)
 
