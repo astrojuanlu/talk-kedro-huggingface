@@ -48,7 +48,7 @@ class DeltaDataset(AbstractVersionedDataset[pl.DataFrame, pl.DataFrame]):
 
         self._protocol = protocol
         self._storage_options = {**_credentials, **_fs_args}
-        self._fs = fsspec.filesystem(self._protocol, **self._storage_options)
+        self._fs = fsspec.filesystem(self._protocol, **_fs_args)
 
         self.metadata = metadata
 
@@ -107,8 +107,11 @@ class DeltaDataset(AbstractVersionedDataset[pl.DataFrame, pl.DataFrame]):
 
     def _exists(self) -> bool:
         try:
-            load_path = get_filepath_str(self._get_load_path(), self._protocol)
+            load_path = f"{self._protocol}{PROTOCOL_DELIMITER}{self._get_load_path()}"
+            pl.read_delta(
+                load_path, storage_options=self._storage_options, **self._load_args
+            )
         except DatasetError:
             return False
-
-        return self._fs.exists(load_path)
+        else:
+            return True
