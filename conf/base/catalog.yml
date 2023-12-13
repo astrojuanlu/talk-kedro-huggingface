@@ -6,14 +6,14 @@
 statuses_table_readonly:
   type: social_summarizer.datasets.polars_delta.DeltaDataset
   filepath: s3://social-summarizer/statuses
-  credentials: minio_native
+  credentials: minio_object_store
   save_args:
     mode: "error"
 
 statuses_table:
   type: social_summarizer.datasets.polars_delta.DeltaDataset
   filepath: s3://social-summarizer/statuses
-  credentials: minio_native
+  credentials: minio_object_store
   save_args:
     mode: "append"
     # overwrite_schema: false is already the default,
@@ -23,7 +23,7 @@ statuses_table:
 statuses_clean:
   type: social_summarizer.datasets.polars_delta.DeltaDataset
   filepath: s3://social-summarizer/statuses-clean
-  credentials: minio_native
+  credentials: minio_object_store
   save_args:
     mode: "overwrite"
 
